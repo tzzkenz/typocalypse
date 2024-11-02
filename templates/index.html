@@ -19,11 +19,22 @@
 
   <!-- File Upload -->
   <input type="file" id="uploadPdf" accept=".pdf">
+
+  <h4>MODES:</h4>
+  <button id="mode1" onclick="setMode(1)">Mode 1</button>
+  <button id="mode2" onclick="setMode(2)">Mode 2</button>
+  <button id="mode3" onclick="setMode(3)">Mode 3</button>
+  <button id="mode4" onclick="setMode(4)">Gibberish</button>
   <button onclick="extractText()"> Extract Text!</button>
+
+
+  <p>Selected Mode: <span id="selectedMode">None</span></p>
 
   <!-- Text Area for Displaying and Modifying Text -->
   <h3>Extracted Text (Modify as Needed):</h3>
   <textarea id="textOutput" style="width: 100%; height: 200px; white-space: pre-wrap;"></textarea>
+
+
   
   <!-- Button to Save Modified Text as a New PDF -->
   <button onclick="saveModifiedPdf()">Save as New PDF</button>
@@ -32,6 +43,13 @@
 
 
 <script>
+
+  let currentMode = 0;
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('selectedMode').textContent = currentMode;
+  }
+
   async function extractText() {
     const fileInput = document.getElementById('uploadPdf').files[0];
     if(!fileInput) return alert("Please upload a PDF!");
@@ -62,7 +80,7 @@
       const response = await fetch('/modify_text', {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({text: fullText})
+        body: JSON.stringify({text: fullText, mode:currentMode})
       });
 
 
