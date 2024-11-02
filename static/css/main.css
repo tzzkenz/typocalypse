@@ -1,0 +1,92 @@
+/* CSS for PDF Compression Page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 50;
+    padding: 20;
+}
+
+.content {
+    background-color: #31aedb;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    margin: 30px auto;
+    text-align: left;
+}
+
+h1 {
+    font-size: 28px;
+    color: #333333;
+    margin-bottom: 15px;
+}
+
+input[type="file"] {
+    margin: 10px 0;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.label {
+    font-weight: bold;
+    color: #555555;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button.compress {
+    background-color: #007BFF;
+    color: white;
+}
+
+button.save {
+    background-color: #4CAF50;
+    color: white;
+    margin-top: 10px;
+}
+
+.selected-mode {
+    font-size: 16px;
+    color: #333;
+    margin-top: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #dddddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+td {
+    color: #555;
+}
