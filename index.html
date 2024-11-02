@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +17,7 @@
   <h1>!EREH FDP RUOY DAOLPU</h1>
 
   <!-- File Upload -->
-  <input type="file" id="uploadPdf">
+  <input type="file" id="uploadPdf" accept=".pdf">
   <button onclick="extractText()"> Extract Text!</button>
 
   <!-- Text Area for Displaying and Modifying Text -->
@@ -63,34 +64,97 @@
 
 
   async function saveModifiedPdf() {
-    const modifiedText = document.getElementById('textOutput').value;
+  const modifiedText = document.getElementById('textOutput').value;
+  const modifiedLines = modifiedText.split('\n').filter(line => line.trim() !== '');
 
-    // create a new PDF with pdf-lib
-    const pdfDoc = await PDFLib.PDFDocument.create();
-    const page = pdfDoc.addPage([600,800]);
+  // Create a new PDF
+  const pdfDoc = await PDFLib.PDFDocument.create();
+  
+  // PDF configuration
+  const pageWidth = 600;
+  const pageHeight = 800;
+  const margin = 20;
+  const fontSize = 12;
+  const lineHeight = fontSize * 1.2; // 20% spacing between lines
+  const textWidth = pageWidth - (margin * 2);
+  const linesPerPage = Math.floor((pageHeight - (margin * 2)) / lineHeight);
+  
+  // Create first page
+  let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+  let currentY = pageHeight - margin;
+  let lineCounter = 0;
 
-    // add modified text to page
-    page.drawText(modifiedText, {
-      x:20, 
-      y: page.getHeight() - 40,
-      size:12, 
-      maxWidth: 560, 
-      lineHeight: 14
-    });
+  // Process each line
+  for (let line of modifiedLines) {
+    // Check if we need a new page
+    if (lineCounter >= linesPerPage) {
+      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+      currentY = pageHeight - margin;
+      lineCounter = 0;
+    }
 
-    // save and download new pdf
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], {type: 'application/pdf'});
-    const url = URL.createObjectURL(blob);
-
-    // create a link to download the pdf
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'modified.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Handle long lines that might need wrapping
+    const words = line.split(' ');
+    let currentLine = '';
+    
+    for (let word of words) {
+      const testLine = currentLine + (currentLine ? ' ' : '') + word;
+      const testWidth = (testLine.length * fontSize * 0.6); // Approximate width calculation
+      
+      if (testWidth > textWidth) {
+        // Draw current line
+        currentPage.drawText(currentLine, {
+          x: margin,
+          y: currentY,
+          size: fontSize
+        });
+        
+        // Move to next line
+        currentY -= lineHeight;
+        lineCounter++;
+        
+        // Check if we need a new page
+        if (lineCounter >= linesPerPage) {
+          currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+          currentY = pageHeight - margin;
+          lineCounter = 0;
+        }
+        
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    
+    // Draw any remaining text
+    if (currentLine) {
+      currentPage.drawText(currentLine, {
+        x: margin,
+        y: currentY,
+        size: fontSize
+      });
+      
+      currentY -= lineHeight;
+      lineCounter++;
+    }
+    
+    // Add extra space between paragraphs
+    currentY -= lineHeight * 0.5;
+    lineCounter += 0.5;
   }
+
+  // Save and download the PDF
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'modified.pdf';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 </script>
 </html>
