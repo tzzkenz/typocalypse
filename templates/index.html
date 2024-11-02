@@ -10,6 +10,7 @@
     const pdfjsLib = window['pdfjs-dist/build/pdf'];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
   </script>
+  
 
   <title>PDF-LIB test</title>
 </head>
@@ -58,7 +59,7 @@
 
 
       // send extracted text to Flask
-      const response = await fetch('/modify-text', {
+      const response = await fetch('/modify_text', {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'}, 
         body: JSON.stringify({text: fullText})
