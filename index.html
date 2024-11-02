@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/pdf-lib"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script>
+    // Set up PDF.js after it loads
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+  </script>
+
+  <title>PDF-LIB test</title>
+</head>
+<body>
+  <h1>!EREH FDP RUOY DAOLPU</h1>
+
+  <!-- File Upload -->
+  <input type="file" id="uploadPdf">
+  <button onclick="extractText()"> Extract Text!</button>
+
+  <!-- Text Area for Displaying and Modifying Text -->
+  <h3>Extracted Text (Modify as Needed):</h3>
+  <textarea id="textOutput" style="width: 100%; height: 200px; white-space: pre-wrap;"></textarea>
+  
+  <!-- Button to Save Modified Text as a New PDF -->
+  <button onclick="saveModifiedPdf()">Save as New PDF</button>
+
+</body>
+
+
+<script>
+  async function extractText() {
+    const fileInput = document.getElementById('uploadPdf').files[0];
+    if(!fileInput) return alert("Please upload a PDF!");
+
+    const fileReader = new FileReader();
+    fileReader.onload = async function() {
+      const typedArray = new Uint8Array(this.result);
+
+      // LOAD PDF
+      const pdf = await pdfjsLib.getDocument(typedArray).promise;
+
+      // extract text from each page
+      let fullText = "";
+      for(let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+
+
+        // extract text items and add to full text
+        textContent.items.forEach(item => {
+          fullText += item.str + " ";
+        });
+        fullText += "\n\n";
+      }
+
+      document.getElementById('textOutput').value = fullText;
+    }
+
+    fileReader.readAsArrayBuffer(fileInput);
+  }
+
+
+  async function saveModifiedPdf() {
+    const modifiedText = document.getElementById('textOutput').value;
+
+    // create a new PDF with pdf-lib
+    const pdfDoc = await PDFLib.PDFDocument.create();
+    const page = pdfDoc.addPage([600,800]);
+
+    // add modified text to page
+    page.drawText(modifiedText, {
+      x:20, 
+      y: page.getHeight() - 40,
+      size:12, 
+      maxWidth: 560, 
+      lineHeight: 14
+    });
+
+    // save and download new pdf
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+    const url = URL.createObjectURL(blob);
+
+    // create a link to download the pdf
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'modified.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+</html>
