@@ -15,26 +15,20 @@
   <title>PDF-LIB test</title>
 </head>
 <body>
-  <h1>!EREH FDP RUOY DAOLPU</h1>
+  <h1>Compress PDF!</h1>
 
   <!-- File Upload -->
   <input type="file" id="uploadPdf" accept=".pdf">
 
-  <h4>MODES:</h4>
-  <button id="mode1" onclick="setMode(1)">Mode 1</button>
-  <button id="mode2" onclick="setMode(2)">Mode 2</button>
-  <button id="mode3" onclick="setMode(3)">Mode 3</button>
-  <button id="mode4" onclick="setMode(4)">Gibberish</button>
-  <button onclick="extractText()"> Extract Text!</button>
+  <h4>Set Percentage of Compression:</h4>
+  <button id="mode1" onclick="setMode(1)">25%</button>
+  <button id="mode2" onclick="setMode(2)">50%</button>
+  <button id="mode3" onclick="setMode(3)">75%</button>
+  <button id="mode4" onclick="setMode(4)">100%</button>
+  <button onclick="extractText()"> Compress!</button>
 
 
   <p>Selected Mode: <span id="selectedMode">None</span></p>
-
-  <!-- Text Area for Displaying and Modifying Text -->
-  <h3>Extracted Text (Modify as Needed):</h3>
-  <textarea id="textOutput" style="width: 100%; height: 200px; white-space: pre-wrap;"></textarea>
-
-
   
   <!-- Button to Save Modified Text as a New PDF -->
   <button onclick="saveModifiedPdf()">Save as New PDF</button>
@@ -43,7 +37,7 @@
 
 
 <script>
-
+  let requiredText = '';
   let currentMode = 0;
   function setMode(mode) {
     currentMode = mode;
@@ -85,7 +79,7 @@
 
 
       const result = await response.json();
-      document.getElementById('textOutput').value = result.text;
+      requiredText = result.text;
     };
 
     fileReader.readAsArrayBuffer(fileInput);
@@ -93,7 +87,7 @@
 
 
   async function saveModifiedPdf() {
-    const modifiedText = document.getElementById('textOutput').value;
+    const modifiedText = requiredText;
     const modifiedLines = modifiedText.split('\n').filter(line => line.trim() !== '');
 
     // Create a new PDF
