@@ -18,7 +18,7 @@ def transform_text(input_text, complexity_level=3):
         str: Transformed text
     """
     # Configure the Gemini API
-    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+    genai.configure(api_key=os.getenv('GOOGLE_AI_API_KEY'))
 
     # Select the model
     model = genai.GenerativeModel('gemini-pro')

@@ -18,7 +18,11 @@ def modify_text():
 
     enhancer = PseudoIntellectualEnhancer()
     # modified_text = enhancer.enhance_to_gibberish(extracted_text, complexity_factor=1)
-    modified_text = transform_text(text, complexity_level=mode)
+    if mode == 4:
+        modified_text = enhancer.enhance_to_gibberish(text, complexity_factor=1)
+    else:
+        modified_text = transform_text(text, complexity_level=mode)
+        
 
     return jsonify({'text': modified_text})
 
